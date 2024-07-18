@@ -43,7 +43,12 @@ const Login = () => {
                 // Signed in 
                 setLoading(false);
                 const user = userCredential.user;
-                navigate("/home")
+                if(values.email == "admin@society.com"){
+                    navigate("/adminHome")
+                }
+                else{
+                    navigate("/home")
+                }
                 console.log(user);
             })
             .catch((error) => {

@@ -19,6 +19,7 @@ import Weekly_Investments from './page/Weekly_Investments';
 import Society_Investments from './page/Society_Investments';
 import Profile from './page/Profile';
 import Daily_Deposit from './page/Daily_Deposit';
+import AdminHome from './page/AdminHome';
 
 
 function App() {
@@ -44,6 +45,38 @@ function App() {
                   path="/home"
                   element={
                     < Home />
+                  }
+                />
+                <Route
+                  path="/invest"
+                  element={
+                    < Investments />
+                  }
+                />
+
+                <Route
+                  path="/notes/:id"
+                  element={<NoteDetail />}
+                />
+
+                <Route
+                  path="/notes"
+                  element={
+                    < Notes />
+                  }
+                />
+
+                <Route path="/weekly" element={<Weekly_Investments />} />
+                <Route path="/society" element={<Society_Investments />} />
+                <Route path="/daily" element={<Daily_Deposit />} />
+
+              </Route>
+
+              <Route element={<ProtectedRoute user={user} />}>
+                <Route
+                  path="/adminHome"
+                  element={
+                    < AdminHome />
                   }
                 />
                 <Route
