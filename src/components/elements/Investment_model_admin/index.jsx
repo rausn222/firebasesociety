@@ -46,6 +46,7 @@ const Investment_Details_Admin = ({ isOpen, onClose, investment, onApprove }) =>
       }
       const userDocRef = doc(db, 'transactions', investment.id);
       await updateDoc(userDocRef, { utrNumber: utrNumber });
+      onApprove();
     }
   };
 
@@ -71,7 +72,7 @@ const Investment_Details_Admin = ({ isOpen, onClose, investment, onApprove }) =>
           </label>)
         }
         {error && <p className="error-message">{error}</p>}
-        <Button onClick={onApprove} className="mt-6 w-full mx-auto">
+        <Button onClick={handleSubmit} className="mt-6 w-full mx-auto">
           Approve
         </Button>
         <Button onClick={onClose} className="mt-6 w-full mx-auto">

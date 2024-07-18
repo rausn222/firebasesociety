@@ -21,6 +21,7 @@ import Profile from './page/Profile';
 import Daily_Deposit from './page/Daily_Deposit';
 import AdminHome from './page/AdminHome';
 import ProtectedRouteAdmin from './components/widgets/ProtectedRouteAdmin';
+import Users from './page/Users';
 
 
 function App() {
@@ -78,6 +79,12 @@ function App() {
                   path="/adminHome"
                   element={
                     < AdminHome />
+                  }
+                />
+                <Route
+                  path="/users"
+                  element={
+                    < Users />
                   }
                 />
               </Route>
