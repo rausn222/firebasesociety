@@ -1,0 +1,17 @@
+[debug] [2024-07-18T08:30:20.930Z] ----------------------------------------------------------------------
+[debug] [2024-07-18T08:30:20.931Z] Command:       /usr/local/bin/node /usr/local/bin/firebase deploy
+[debug] [2024-07-18T08:30:20.931Z] CLI Version:   13.13.3
+[debug] [2024-07-18T08:30:20.932Z] Platform:      darwin
+[debug] [2024-07-18T08:30:20.932Z] Node Version:  v20.15.1
+[debug] [2024-07-18T08:30:20.932Z] Time:          Thu Jul 18 2024 14:00:20 GMT+0530 (India Standard Time)
+[debug] [2024-07-18T08:30:20.932Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-07-18T08:30:20.966Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-07-18T08:30:20.966Z] > authorizing via signed-in user (rausn222@gmail.com)
+[debug] [2024-07-18T08:30:20.966Z] [iam] checking project bhartiyesociety for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2024-07-18T08:30:20.967Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/bhartiyesociety:testIamPermissions [none]
+[debug] [2024-07-18T08:30:20.967Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/bhartiyesociety:testIamPermissions x-goog-quota-user=projects/bhartiyesociety
+[debug] [2024-07-18T08:30:20.967Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/bhartiyesociety:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2024-07-18T08:30:22.579Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/bhartiyesociety:testIamPermissions 200
+[debug] [2024-07-18T08:30:22.579Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/bhartiyesociety:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2024-07-18T08:30:22.580Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/bhartiyesociety [none]

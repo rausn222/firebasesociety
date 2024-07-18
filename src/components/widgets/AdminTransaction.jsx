@@ -6,7 +6,7 @@ import Button from '../elements/Button';
 import { onAuthStateChanged } from 'firebase/auth';
 import { collection, query, where, addDoc, getDocs } from "firebase/firestore";
 import { db, auth } from '../../firebase';
-import Investment_Details from '../elements/Investment_model';
+import Investment_Details_Admin from '../elements/Investment_model_admin';
 
 const AdminTransactions = () => {
     const [user, setUser] = useState("");
@@ -16,14 +16,10 @@ const AdminTransactions = () => {
     const [selectedInvestment, setSelectedInvestment] = useState(null); // State for selected investment
     const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
 
-    const resetTimer = () => {
-        navigate("/invest");
-    }
-
     const fetchData = async () => {
         try {
             setLoading(true);
-            const q = query(collection(db, "investments"), where("uid", "==", user));
+            const q = query(collection(db, "transactions"), where("status", "==", "submitted"));
             const querySnapshot = await getDocs(q);
             const fetchedData = [];
             querySnapshot.forEach((doc) => {
@@ -63,21 +59,22 @@ const AdminTransactions = () => {
         setSelectedInvestment(null);
     };
 
+    const approveTransaction = () => {
+        
+        setIsModalOpen(false);
+        setSelectedInvestment(null);
+    };
+
     return (
         <section>
             {
                 data.length === 0 && <Card className="text-center pb-16">
                     <Text className="font-semibold text-xl">
-                        No Investment yet !!!
+                        No Transaction approval pending yet !!!
                     </Text>
-
-                    <Text className="text-sm pt-2">
-                        Invest today and start earning
-                    </Text>
-
                     <div className='flex flex-col'>
-                        <Button onClick={resetTimer} className="mt-6 w-auto mx-auto">
-                            Invest
+                        <Button onClick={fetchData} className="mt-6 w-auto mx-auto">
+                            Refresh
                         </Button>
                     </div>
                 </Card>
@@ -86,7 +83,7 @@ const AdminTransactions = () => {
                 data.length !== 0 &&
                 <div>
                     <Text className="font-semibold text-xl">
-                        Investments
+                        Transactions
                     </Text>
 
                     <div className='relative todo-weekly rounded-lg shadow-md' style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 10, paddingRight: 10, marginTop:15, marginBottom: 15 }}>
@@ -94,13 +91,13 @@ const AdminTransactions = () => {
                             Amount
                         </div>
                         <div style={{ fontSize: "15px" }}>
-                            Date Invested
+                            Date
                         </div>
                         <div style={{ fontSize: "15px" }}>
-                            Investment Type
+                            Transaction Type
                         </div>
                         <div style={{ fontSize: "15px" }}>
-                            Status
+                            UTRN
                         </div>
                     </div>
                 </div>
@@ -121,7 +118,7 @@ const AdminTransactions = () => {
                             </div>
 
                             <div style={{ fontSize: "15px" }}>
-                                {note.status}
+                                {note.utrNumber}
                             </div>
                         </div>
                     </div>
@@ -129,10 +126,11 @@ const AdminTransactions = () => {
             }
 
             {isModalOpen && selectedInvestment && (
-                <Investment_Details 
+                <Investment_Details_Admin 
                     isOpen={isModalOpen}
                     investment={selectedInvestment}
                     onClose={closeModal}
+                    onApprove={approveTransaction}
                 />
             )}
         </section>
