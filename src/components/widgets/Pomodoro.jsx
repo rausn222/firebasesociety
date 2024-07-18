@@ -23,7 +23,7 @@ const Pomodoro = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const q = query(collection(db, "transactions"), where("uid", "==", user));
+            const q = query(collection(db, "investments"), where("uid", "==", user));
             const querySnapshot = await getDocs(q);
             const fetchedData = [];
             querySnapshot.forEach((doc) => {

@@ -8,7 +8,7 @@ import moment from 'moment/moment';
 import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
-const UPIPopup = ({ isOpen, onClose, type, amount }) => {
+const UPIPopup = ({ isOpen, onClose, type, amount, time }) => {
   const [utrNumber, setUtrNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -35,14 +35,25 @@ const UPIPopup = ({ isOpen, onClose, type, amount }) => {
     }
     setLoading(true);
     try {
+      const investmentRef = await addDoc(collection(db, "investments"), {
+        utrNumber: utrNumber,
+        uid: user,
+        time : time,
+        dateCreated: moment().format("MMM Do YY"),
+        type: type,
+        amount: amount,
+        status: "submitted"
+      });
       const docRef = await addDoc(collection(db, "transactions"), {
         utrNumber: utrNumber,
         uid: user,
         dateCreated: moment().format("MMM Do YY"),
         type: type,
         amount: amount,
-        status: "submitted"
+        status: "submitted",
+        investmentID: investmentRef.id
       });
+      
       setLoading(false);
       return true;
     } catch (error) {

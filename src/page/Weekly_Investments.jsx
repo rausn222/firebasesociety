@@ -143,7 +143,7 @@ const Weekly_Investments = () => {
                             <Button onClick={handleButtonClick} className="mt-6 w-full mx-auto">
                                 Invest Now
                             </Button>
-                            {isUPIPopupOpen && <UPIPopup type={"Weekly"} amount={amount} isOpen={isUPIPopupOpen} onClose={closeUPIPopup} />}
+                            {isUPIPopupOpen && <UPIPopup type={"Weekly"} time={weeks} amount={amount} isOpen={isUPIPopupOpen} onClose={closeUPIPopup} />}
                             <ToastContainer />
                         </div>
                     </section>

@@ -35,6 +35,7 @@ const Investment_Details = ({ isOpen, onClose, investment }) => {
       <Modal isOpen={isOpen} onRequestClose={onClose} contentLabel="UPI Payment" style={customStyles}>
         <center><b><h2>Investment Details</h2></b></center>
         <p>Please find the details of your investment here.</p>
+        <Text>Investment ID : {investment.id}</Text>
         <Text>Investment Type : {investment.type}</Text>
         <Text>Investment Amount : {investment.amount}</Text>
         <Text>Investment Status : {investment.status}</Text>
