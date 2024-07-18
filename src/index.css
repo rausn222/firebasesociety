@@ -1,0 +1,88 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;500;600;700&family=Poppins:wght@100;400;600;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.todo-weekly {
+  box-shadow: rgba(0, 0, 0, 0.55) 0px 5px 15px;
+  background: #1e272e;
+  height: 50px;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #1e272e;
+}
+
+.ck.ck-editor__main {
+  color: #334;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.sidebar-width {
+  width: 18rem;
+}
+
+.main-width {
+  padding-left: 20rem;
+}
+
+@media only screen and (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sidebar-width {
+    width: 0;
+  }
+
+  .main-width {
+    padding-left: 0rem;
+  }
+}
+
+@media only screen and (max-width: 330px) {
+  .grid-container {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .sidebar-width {
+    width: 0;
+  }
+
+  .main-width {
+    padding-left: 0rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1000px) {
+  .grid-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .sidebar-width {
+    width: 10rem;
+  }
+
+  .main-width {
+    padding-left: 12rem;
+  }
+}
