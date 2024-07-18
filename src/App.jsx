@@ -20,6 +20,7 @@ import Society_Investments from './page/Society_Investments';
 import Profile from './page/Profile';
 import Daily_Deposit from './page/Daily_Deposit';
 import AdminHome from './page/AdminHome';
+import ProtectedRouteAdmin from './components/widgets/ProtectedRouteAdmin';
 
 
 function App() {
@@ -72,36 +73,13 @@ function App() {
 
               </Route>
 
-              <Route element={<ProtectedRoute user={user} />}>
+              <Route element={<ProtectedRouteAdmin user={user} />}>
                 <Route
                   path="/adminHome"
                   element={
                     < AdminHome />
                   }
                 />
-                <Route
-                  path="/invest"
-                  element={
-                    < Investments />
-                  }
-                />
-
-                <Route
-                  path="/notes/:id"
-                  element={<NoteDetail />}
-                />
-
-                <Route
-                  path="/notes"
-                  element={
-                    < Notes />
-                  }
-                />
-
-                <Route path="/weekly" element={<Weekly_Investments />} />
-                <Route path="/society" element={<Society_Investments />} />
-                <Route path="/daily" element={<Daily_Deposit />} />
-
               </Route>
 
               <Route path="/signup" element={<Signup />} />

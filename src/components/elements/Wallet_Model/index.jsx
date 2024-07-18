@@ -31,16 +31,30 @@ const Wallet_model = ({ isOpen, onClose, mode }) => {
   const handleAddTransactionToDb = async () => {
     setLoading(true);
     try {
-      const docRef = await addDoc(collection(db, "transactions"), {
-        mode: mode,
-        utrNumber: utrNumber,
-        uid: user,
-        dateCreated: moment().format("MMM Do YY"),
-        amount: amount,
-        status: "submitted"
-      });
-      setLoading(false);
-      return true;
+      if (mode == "add money") {
+        await addDoc(collection(db, "transactions"), {
+          mode: mode,
+          utrNumber: utrNumber,
+          uid: user,
+          dateCreated: moment().format("MMM Do YY"),
+          amount: amount,
+          status: "submitted"
+        });
+        setLoading(false);
+        return true;
+      }
+      else {
+        await addDoc(collection(db, "transactions"), {
+          mode: mode,
+          upiID: utrNumber,
+          uid: user,
+          dateCreated: moment().format("MMM Do YY"),
+          amount: amount,
+          status: "submitted"
+        });
+        setLoading(false);
+        return true;
+      }
     } catch (error) {
       console.error("Error adding document:", error);
       setError("Error adding the note.");

@@ -4,7 +4,7 @@ import Text from '../elements/Text';
 import { useNavigate } from 'react-router-dom';
 import Button from '../elements/Button';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, query, where, addDoc, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, getDoc, doc, updateDoc } from "firebase/firestore";
 import { db, auth } from '../../firebase';
 import Investment_Details_Admin from '../elements/Investment_model_admin';
 
@@ -59,11 +59,39 @@ const AdminTransactions = () => {
         setSelectedInvestment(null);
     };
 
-    const approveTransaction = () => {
-        
+
+    const approveTransaction = async () => {
         setIsModalOpen(false);
-        setSelectedInvestment(null);
+        try {
+            if (selectedInvestment.mode === "add money") {
+                const userDocRef = doc(db, 'userInfo', selectedInvestment.uid);
+                const userDocSnapshot = await getDoc(userDocRef);
+
+                if (userDocSnapshot.exists()) {
+                    const currentAmount = userDocSnapshot.data().amount;
+                    if (currentAmount == undefined) {
+                        await updateDoc(userDocRef, { amount: selectedInvestment.amount });
+                    }
+                    else {
+                        const newAmount = currentAmount + parseFloat(selectedInvestment.amount);
+                        await updateDoc(userDocRef, { amount: newAmount });
+                    }
+                } else {
+                    await updateDoc(userDocRef, { amount: selectedInvestment.amount });
+                }
+            }
+
+            const transactionDocRef = doc(db, 'transactions', selectedInvestment.id);
+            await updateDoc(transactionDocRef, { status: "verified" });
+            alert('Status updated successfully!');
+            setSelectedInvestment(null);
+            fetchData();
+        } catch (error) {
+            console.error("Error updating document: ", error);
+            alert('Error updating status');
+        }
     };
+
 
     return (
         <section>
@@ -86,7 +114,7 @@ const AdminTransactions = () => {
                         Transactions
                     </Text>
 
-                    <div className='relative todo-weekly rounded-lg shadow-md' style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 10, paddingRight: 10, marginTop:15, marginBottom: 15 }}>
+                    <div className='relative todo-weekly rounded-lg shadow-md' style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 10, paddingRight: 10, marginTop: 15, marginBottom: 15 }}>
                         <div style={{ fontSize: "15px" }}>
                             Amount
                         </div>
@@ -114,7 +142,7 @@ const AdminTransactions = () => {
                                 {note.dateCreated}
                             </div>
                             <div style={{ fontSize: "15px" }}>
-                                {note.type}
+                                {note.type ? note.type : note.mode}
                             </div>
 
                             <div style={{ fontSize: "15px" }}>
@@ -126,7 +154,7 @@ const AdminTransactions = () => {
             }
 
             {isModalOpen && selectedInvestment && (
-                <Investment_Details_Admin 
+                <Investment_Details_Admin
                     isOpen={isModalOpen}
                     investment={selectedInvestment}
                     onClose={closeModal}

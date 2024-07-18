@@ -4,14 +4,13 @@ import { getCurrentUser } from '../store/features/userSlice';
 import Card from '../components/elements/Card';
 import Button from '../components/elements/Button';
 import Text from '../components/elements/Text';
-import { doc, getDoc, query, collection, where, getDocs} from "firebase/firestore";
+import { doc, getDoc, query, collection, where, getDocs } from "firebase/firestore";
 import { db } from '../firebase';
 import Wallet_Model from '../components/elements/Wallet_Model';
 
 const Daily_Deposit = () => {
 
     const user = useSelector((state) => state.user.value);
-    const { value, status } = useSelector((state) => state.note);
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
@@ -118,7 +117,7 @@ const Daily_Deposit = () => {
                         </div>
                     </div>
                 }
-                {
+                {(data != [] && data!= null ) &&
                     data.map((note) => (
                         <div key={note.id} onClick={() => handleItemClick(note)} style={{ cursor: 'pointer' }}>
                             <div className='relative todo-weekly rounded-lg shadow-md' style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 10, paddingRight: 10, marginBottom: 15 }}>
