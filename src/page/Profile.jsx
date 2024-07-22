@@ -7,11 +7,11 @@ import { TextField } from '@mui/material';
 import { storage } from '../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import Button from '../components/elements/Button';
-import { updateProfile } from 'firebase/auth';
-import { auth } from '../firebase';
 import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from 'react-router-dom';
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { db } from '../firebase';
 
 const Profile = () => {
     const user = useSelector((state) => state.user.value);
@@ -38,18 +38,43 @@ const Profile = () => {
         }
     };
 
+    const fetchUserInfo = async () => {
+        const userDocRef = doc(db, "userInfo", user.uid);
+        const userDocSnapshot = await getDoc(userDocRef);
+        if (userDocSnapshot.exists()) {
+            const userData = { id: userDocSnapshot.id, ...userDocSnapshot.data() };
+            if (userData.name) {
+                setName(userData.name);
+            }
+            console.log(userData);
+        } else {
+            console.log("No such document!");
+        }
+    }
+
     const saveChanges = async () => {
-        console.log("called");
-        await updateProfile(auth.currentUser, {
-            displayName: `${name} `,
-        }).then(() => {
-            toast("Changes Saved !!");
-            console.log("updated successfully");
-        }).catch((error) => {
-            toast("Error changing name");
-            console.log("error updating name");
-            console.log(error);
-        })
+        try {
+            const userDocRef = doc(db, "userInfo", user.uid);
+            const docSnapshot = await getDoc(userDocRef);
+            if (docSnapshot.exists()) {
+                await updateDoc(userDocRef, {
+                    name: name
+                });
+                console.log('Document updated successfully');
+                toast("User Data updated successfully");
+            }
+            else {
+                await setDoc(userDocRef, {
+                    amount: 0,
+                    name: name,
+                    email: user.email
+                });
+                console.log('Document created successfully');
+                toast("User Data updated successfully");
+            }
+        } catch (error) {
+            console.error('Error updating/creating document:', error);
+        }
     };
 
     const handleGoBack = () => {
@@ -68,8 +93,10 @@ const Profile = () => {
 
             if (side === 'front') {
                 setAadharFrontUrl(url);
+                toast("Aadhar card front image updated successfully");
             } else {
                 setAadharBackUrl(url);
+                toast("Aadhar card back image updated successfully");
             }
         } catch (error) {
             console.error('Error uploading file:', error);
@@ -79,7 +106,7 @@ const Profile = () => {
     useEffect(() => {
         dispatch(getCurrentUser());
         fetchAadharImages();
-        setName(user.displayName);
+        fetchUserInfo();
         setEmail(user.email)
     }, []);
 
@@ -135,10 +162,10 @@ const Profile = () => {
                                 </div> :
                                 <Text style={{ color: 'white' }}>{"No Image"}</Text>
                         }
-                        <Button variant="contained" component="label">
+                        <label>
                             {aadharBackUrl ? "Replace" : "Upload"}
                             <input type="file" hidden accept=".pdf, image/*" onChange={(e) => handleFileChange(e, 'front')} />
-                        </Button>
+                        </label>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', marginTop: 10 }}>
                         <Text>Aadhar Back</Text>
@@ -156,10 +183,10 @@ const Profile = () => {
                                 </div> :
                                 <Text style={{ color: 'white' }}>{"No Image"}</Text>
                         }
-                        <Button variant="contained" component="label">
+                        <label>
                             {aadharBackUrl ? "Replace" : "Upload"}
                             <input type="file" hidden accept=".pdf, image/*" onChange={(e) => handleFileChange(e, 'back')} />
-                        </Button>
+                        </label>
                     </div>
                     <Button onClick={() => saveChanges()} className="mt-6 w-full mx-auto">
                         Save

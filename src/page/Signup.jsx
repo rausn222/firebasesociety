@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react';
 import Text from '../components/elements/Text';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import { Formik, Field, Form } from 'formik';
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const Signup = () => {
     const navigate = useNavigate();
-
     const [errors, setErrors] = useState('');
     const [loading, setLoading] = useState(false);
+    const [currentDate, setCurrentDate] = useState('');
 
     const initialValues = {
         firstName: "",
@@ -17,7 +18,18 @@ const Signup = () => {
         email: "",
         password: "",
         confirmPassword: "",
+        referCode: "",
     }
+
+    useEffect(() => {
+        const date = new Date();
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const formattedDate = `${day}/${month}/${year}`;
+        console.log(formattedDate);
+        setCurrentDate(formattedDate);
+      }, []);
 
     const validateForm = (values) => {
         const errors = {};
@@ -52,19 +64,38 @@ const Signup = () => {
             errors.password = "Password does not match!";
         }
 
+        if (!(values.referCode.length == 0 || values.referCode.length == 10)) {
+            errors.referCode = "Invalid refer code"
+        }
+
         return errors;
     }
 
     const onSubmitSignupForm = async (values) => {
         setLoading(true);
         await createUserWithEmailAndPassword(auth, values.email, values.password)
-            .then((userCredential) => {
-                // Signed in 
+            .then(async (userCredential) => {
                 setLoading(false);
                 const user = userCredential.user;
+                const userDocRef = doc(db, 'userInfo', auth.currentUser.uid);
+                try {
+                    const docSnapshot = await getDoc(userDocRef);
+                    if (!docSnapshot.exists()) {
+                        await setDoc(userDocRef, {
+                            amount: 0,
+                            name: `${values.firstName} ${values.lastName}`,
+                            email: auth.currentUser.email,
+                            refer: `${values.referCode}`,
+                            date: currentDate,
+                            myRefer: (user.email.slice(0, 5) + user.uid.slice(0, 5))
+                        });
+                        console.log('Document created successfully');
+                    }
+                } catch (error) {
+                    console.error('Error updating/creating document:', error);
+                }
                 console.log(user);
                 navigate("/")
-                // ...
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -72,19 +103,9 @@ const Signup = () => {
                 setErrors(errorMessage);
                 setLoading(false);
                 console.log(errorCode, errorMessage);
-                // ..
             });
-
-        await updateProfile(auth.currentUser, {
-            displayName: `${values.firstName} ${values.lastName}`,
-        }).then(() => {
-            console.log("updated successfully");
-        }).catch((error) => {
-            console.log("error updating name");
-            console.log(error);
-        })
     }
-   
+
 
     return (
         <main >
@@ -95,7 +116,7 @@ const Signup = () => {
                             <div>
                                 <div>
                                     <Text className="text-2xl text-white text-center font-bold mb-2">
-                                    Bhartiye<span className="text-tertiary">Society</span>
+                                        Bhartiye<span className="text-tertiary">Society</span>
                                     </Text>
 
                                     <h2 className="text-white text-center text-sm md:text-xs tracking-tight text-gray-900">
@@ -212,6 +233,23 @@ const Signup = () => {
                                                                 className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                                                                 placeholder="Confirm Password"
                                                             />
+                                                        </div>
+                                                        <div>
+                                                            <label htmlFor="email-address" className="sr-only">
+                                                                Referal Code
+                                                            </label>
+                                                            <Field
+                                                                type="name"
+                                                                id="referCode"
+                                                                name="referCode"
+                                                                value={values.referCode}
+                                                                onChange={handleChange}
+                                                                className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                                                                placeholder="Referal Code"
+                                                            />
+                                                            <p className='text-xs' style={{ color: 'red' }}>
+                                                                {errors.referCode && touched.referCode && errors.referCode}
+                                                            </p>
                                                         </div>
                                                     </div>
 

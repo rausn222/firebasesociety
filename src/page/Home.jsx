@@ -5,19 +5,7 @@ import Pomodoro from '../components/widgets/Pomodoro';
 // import { getAllUserNotes } from '../store/features/noteSlice';
 
 const Home = () => {
-
-    const user = useSelector((state) => state.user.value);
-    const { value, status } = useSelector((state) => state.note);
     const dispatch = useDispatch();
-
-    useEffect(() => {      
-
-        const intervalID = setInterval(() => {
-            // console.log("yes")`
-        }, 1000)
-
-        return () => clearInterval(intervalID);
-    }, [])
 
     useEffect(() => {
         dispatch(getCurrentUser());

@@ -69,7 +69,7 @@ const NavbarAdmin = () => {
                         </Text>
 
                         <NavLink
-                            to="/home"
+                            to="/adminHome"
                             className={({ isActive }) =>
                                 isActive ? "bg-secondary w-full block border-l-2 border-l-tertiary mr-2 py-3  text-sm"
                                     :
@@ -81,7 +81,7 @@ const NavbarAdmin = () => {
                             </li>
                         </NavLink>
                         <NavLink
-                            to="/invest"
+                            to="/users"
                             className={({ isActive }) =>
                                 isActive ? "bg-secondary w-full block border-l-2 border-l-tertiary mr-2 py-3  text-sm"
                                     :
@@ -90,6 +90,18 @@ const NavbarAdmin = () => {
                         >
                             <li className="p-4 ">
                                 Users
+                            </li>
+                        </NavLink>
+                        <NavLink
+                            to="/configurations"
+                            className={({ isActive }) =>
+                                isActive ? "bg-secondary w-full block border-l-2 border-l-tertiary mr-2 py-3  text-sm"
+                                    :
+                                    "mr-2 text-sm py-3 pl-4"
+                            }
+                        >
+                            <li className="p-4 ">
+                                Configurations
                             </li>
                         </NavLink>
                     </ul>

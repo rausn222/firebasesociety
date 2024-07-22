@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentUser } from '../store/features/userSlice';
-import UserList from '../components/widgets/UserList';
+import Refer_Widget from '../components/widgets/Refer_Widget';
 
-const Users = () => {
-    
+const Refer = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -14,12 +13,10 @@ const Users = () => {
     return (
         <section className="text-white pt-10 pb-24 px-3  md:pt-10 md:pb-20">
             <section className="grid grid-cols-1 space-y-6 md:space-y-0 md:gap-4">
-                <UserList />
+                <Refer_Widget />
             </section>
         </section>
     )
 }
 
-export default Users
-
-
+export default Refer

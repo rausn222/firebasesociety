@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import bg from './components/assets/bg.png';
-// import Sidebar from './components/widgets/Sidebar';
 import Home from './page/Home';
 import Notes from './page/Notes';
 import Signup from './page/Signup';
 import Login from './page/Login';
 import { Routes, Route } from 'react-router-dom';
-// import Navbar from './components/widgets/Navbar';
-import Layout from './components/widgets/Layout';
 import { BrowserRouter as Router } from 'react-router-dom';
 import NoteDetail from './page/NoteDetail';
 import ProtectedRoute from './components/widgets/ProtectedRoute';
@@ -22,6 +18,10 @@ import Daily_Deposit from './page/Daily_Deposit';
 import AdminHome from './page/AdminHome';
 import ProtectedRouteAdmin from './components/widgets/ProtectedRouteAdmin';
 import Users from './page/Users';
+import UsersDetails from './page/UserDetails';
+import Configuration from './page/Configuration';
+import Refer from './page/Refer';
+import ForgotPassword from './page/ForgotPassword';
 
 
 function App() {
@@ -71,7 +71,7 @@ function App() {
                 <Route path="/weekly" element={<Weekly_Investments />} />
                 <Route path="/society" element={<Society_Investments />} />
                 <Route path="/daily" element={<Daily_Deposit />} />
-
+                <Route path="/refer" element={<Refer />} />
               </Route>
 
               <Route element={<ProtectedRouteAdmin user={user} />}>
@@ -87,8 +87,20 @@ function App() {
                     < Users />
                   }
                 />
+                <Route
+                  path="/userDetails"
+                  element={
+                    < UsersDetails />
+                  }
+                />
+                <Route
+                  path="/configurations"
+                  element={
+                    < Configuration />
+                  }
+                />
               </Route>
-
+              <Route path="/forgot" element={<ForgotPassword />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/" element={<Login />} />
               <Route path="*" element={< NotFound />} />

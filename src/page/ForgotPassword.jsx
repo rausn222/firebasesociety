@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
 import Text from '../components/elements/Text';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../firebase';
 import { NavLink, useNavigate } from 'react-router-dom'
 import { Formik, Field, Form } from 'formik';
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
-const Login = () => {
-    const navigate = useNavigate();
-    const [errors, setErrors] = useState('');
+const ForgotPassword = () => {
     const [loading, setLoading] = useState(false);
 
     const initialValues = {
         email: "",
-        password: "",
     }
 
     const validateForm = (values) => {
@@ -26,34 +25,20 @@ const Login = () => {
             errors.email = "Invalid email address";
         }
 
-        if (!values.password) {
-            errors.password = "Password number is required";
-        } else if (values.password.length <= 8) {
-            errors.password = "Password length must be more than 7"
-        }
-
         return errors;
     }
 
     const onLogin = (values) => {
         setLoading(true);
-        signInWithEmailAndPassword(auth, values.email, values.password)
-            .then((userCredential) => {
-                // Signed in 
+        sendPasswordResetEmail(auth, values.email)
+            .then(() => {
                 setLoading(false);
-                const user = userCredential.user;
-                if(values.email == "admin@society.com"){
-                    navigate("/adminHome")
-                }
-                else{
-                    navigate("/home")
-                }
+                toast("Reset password link shared on your mail")
                 console.log(user);
             })
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                setErrors(errorMessage);
                 setLoading(false);
                 console.log(errorCode, errorMessage)
             });
@@ -73,14 +58,10 @@ const Login = () => {
                                     </Text>
 
                                     <h2 className="text-white text-center md:text-sm text-xs tracking-tight text-gray-900">
-                                        Welcome Back
+                                        Forgot Password
                                     </h2>
                                 </div>
-
-                                <div className='mt-4 text-xs' style={{ color: "red" }}>
-                                    {errors && errors}
-                                </div>
-
+                                
                                 <div>
                                     <Formik
                                         initialValues={initialValues}
@@ -119,25 +100,6 @@ const Login = () => {
                                                                 {errors.email && touched.email && errors.email}
                                                             </p>
                                                         </div>
-
-                                                        <div>
-                                                            <label htmlFor="password" className="sr-only">
-                                                                Password
-                                                            </label>
-                                                            <Field
-                                                                type="password"
-                                                                id="password"
-                                                                name="password"
-                                                                value={values.password}
-                                                                onChange={handleChange}
-                                                                className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                                                                placeholder="Password"
-                                                            />
-
-                                                            <p className='text-xs' style={{ color: 'red' }}>
-                                                                {errors.password && touched.password && errors.password}
-                                                            </p>
-                                                        </div>
                                                     </div>
 
                                                     <div>
@@ -146,7 +108,7 @@ const Login = () => {
                                                             className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                                         >
                                                             <span>
-                                                                {loading ? "Logging in ..." : " Login "}
+                                                                {loading ? "Processing ..." : " Reset Password "}
                                                             </span>
                                                         </button>
                                                     </div>
@@ -158,12 +120,7 @@ const Login = () => {
                                 </div>
 
                             </div>
-                            <center>
-                            <NavLink to="/forgot" className="underline text-tertiary">
-                                    Forgot Password?
-                                </NavLink>
-                            </center>
-                            
+
                             <p className="text-sm mt-10 text-white text-center">
                                 No account yet?{' '}
                                 <NavLink to="/signup" className="underline text-tertiary">
@@ -179,9 +136,10 @@ const Login = () => {
                         </div>
                     </div>
                 </section>
+                <ToastContainer />
             </main>
         </>
     )
 }
 
-export default Login
+export default ForgotPassword
