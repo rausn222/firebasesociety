@@ -102,20 +102,22 @@ const UPIPopup = ({ isOpen, onClose, type, amount, time }) => {
         utrNumber: utrNumber,
         uid: user,
         time: time,
-        dateCreated: moment().format("DD/MM/YYYY"),
+        dateCreated: moment().valueOf(),
         type: type,
         amount: amount,
         status: "submitted"
       });
-      await addDoc(collection(db, "transactions"), {
+      const transactionRef = await addDoc(collection(db, "transactions"), {
         utrNumber: utrNumber,
         uid: user,
-        dateCreated: moment().format("DD/MM/YYYY"),
+        dateCreated: moment().valueOf(),
         type: type,
         amount: amount,
         status: "submitted",
         investmentID: investmentRef.id
       });
+
+      await updateDoc(investmentRef, { transactionID: transactionRef.id });
 
       setLoading(false);
       return true;
@@ -166,7 +168,7 @@ const UPIPopup = ({ isOpen, onClose, type, amount, time }) => {
                 await addDoc(collection(db, "transactions"), {
                   utrNumber: "Rererral Bonus",
                   uid: referUID,
-                  dateCreated: moment().format("DD/MM/YYYY"),
+                  dateCreated: moment().valueOf(),
                   mode: "Rererral Bonus",
                   amount: referBonus,
                   status: "Credited"
@@ -183,7 +185,7 @@ const UPIPopup = ({ isOpen, onClose, type, amount, time }) => {
             utrNumber: "wallet_payment",
             uid: user,
             time: time,
-            dateCreated: moment().format("DD/MM/YYYY"),
+            dateCreated: moment().valueOf(),
             type: type,
             amount: amount,
             status: "verified"
@@ -192,7 +194,7 @@ const UPIPopup = ({ isOpen, onClose, type, amount, time }) => {
           await addDoc(collection(db, "transactions"), {
             utrNumber: "wallet_payment",
             uid: user,
-            dateCreated: moment().format("DD/MM/YYYY"),
+            dateCreated: moment().valueOf(),
             type: type,
             amount: amountFloat,
             status: "verified",

@@ -17,12 +17,20 @@ const Profile = () => {
     const user = useSelector((state) => state.user.value);
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
+    const [bankName, setBankName] = useState('');
+    const [ifsc, setIfsc] = useState('');
+    const [accountNumber, setAccountNumber] = useState('');
+    const [accountName, setAccountName] = useState('');
     const [aadharFrontUrl, setAadharFrontUrl] = useState('');
     const [aadharBackUrl, setAadharBackUrl] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const handleChange = (e) => setName(e.target.value);
+    const handleBankNameChange = (e) => setBankName(e.target.value);
+    const handleAccountNumberChange = (e) => setAccountNumber(e.target.value);
+    const handleIfscChange = (e) => setIfsc(e.target.value);
+    const handleAccountHolderNameChange = (e) => setAccountName(e.target.value);
 
     const fetchAadharImages = async () => {
         try {
@@ -58,18 +66,13 @@ const Profile = () => {
             const docSnapshot = await getDoc(userDocRef);
             if (docSnapshot.exists()) {
                 await updateDoc(userDocRef, {
-                    name: name
+                    name: name,
+                    bankName: bankName,
+                    ifsc: ifsc,
+                    accountNumber:accountNumber,
+                    accountName:accountName
                 });
                 console.log('Document updated successfully');
-                toast("User Data updated successfully");
-            }
-            else {
-                await setDoc(userDocRef, {
-                    amount: 0,
-                    name: name,
-                    email: user.email
-                });
-                console.log('Document created successfully');
                 toast("User Data updated successfully");
             }
         } catch (error) {
@@ -145,6 +148,109 @@ const Profile = () => {
                         }}
                         style={{ width: '100%', color: 'white', marginTop: 40 }}
                         placeholder="Full Name"
+                    />
+                    <Text className="font-light text-xl" style={{ marginTop: 30 }}>
+                        Bank Details
+                    </Text>
+                    <TextField
+                        label="Bank Name"
+                        variant="outlined"
+                        value={bankName}
+                        onChange={handleBankNameChange}
+                        InputLabelProps={{
+                            style: { color: 'green' },
+                        }}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: 'white',
+                                },
+                                backgroundColor: 'white',
+                            },
+                        }}
+                        style={{ width: '100%', color: 'white', marginTop: 20 }}
+                        placeholder="Bank Name"
+                    />
+                    <TextField
+                        label="Account Holder Name"
+                        variant="outlined"
+                        value={accountName}
+                        onChange={handleAccountHolderNameChange}
+                        InputLabelProps={{
+                            style: { color: 'green' },
+                        }}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: 'white',
+                                },
+                                backgroundColor: 'white',
+                            },
+                        }}
+                        style={{ width: '100%', color: 'white', marginTop: 20 }}
+                        placeholder="Account Holder Name"
+                    />
+                    <TextField
+                        label="IFSC"
+                        variant="outlined"
+                        value={ifsc}
+                        onChange={handleIfscChange}
+                        InputLabelProps={{
+                            style: { color: 'green' },
+                        }}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: 'white',
+                                },
+                                backgroundColor: 'white',
+                            },
+                        }}
+                        style={{ width: '100%', color: 'white', marginTop: 20 }}
+                        placeholder="IFSC"
+                    />
+                    <TextField
+                        label="Account Number"
+                        variant="outlined"
+                        value={accountNumber}
+                        onChange={handleAccountNumberChange}
+                        InputLabelProps={{
+                            style: { color: 'green' },
+                        }}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: 'white',
+                                },
+                                backgroundColor: 'white',
+                            },
+                        }}
+                        style={{ width: '100%', color: 'white', marginTop: 20 }}
+                        placeholder="Account Number"
                     />
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', marginTop: 10 }}>
                         <Text>Aadhar Front</Text>

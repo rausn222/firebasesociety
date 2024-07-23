@@ -7,6 +7,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { collection, query, where, addDoc, getDocs } from "firebase/firestore";
 import { db, auth } from '../../firebase';
 import Investment_Details from '../elements/Investment_model';
+import Refer_Details from '../elements/Refer_model';
 
 const Refer_Widget = () => {
     const [user, setUser] = useState("");
@@ -14,8 +15,8 @@ const Refer_Widget = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
-    const [selectedInvestment, setSelectedInvestment] = useState(null); // State for selected investment
-    const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+    const [selectedInvestment, setSelectedInvestment] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const referfunction = async () => {
         const shareData = {
@@ -133,7 +134,7 @@ const Refer_Widget = () => {
             }
 
             {isModalOpen && selectedInvestment && (
-                <Investment_Details
+                <Refer_Details
                     isOpen={isModalOpen}
                     investment={selectedInvestment}
                     onClose={closeModal}

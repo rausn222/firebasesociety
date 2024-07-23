@@ -7,6 +7,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { collection, query, where, getDocs, getDoc, doc, updateDoc } from "firebase/firestore";
 import { db, auth } from '../../firebase';
 import Investment_Details_Admin from '../elements/Investment_model_admin';
+import moment from 'moment';
 
 const AdminTransactions = () => {
     const [user, setUser] = useState("");
@@ -27,6 +28,7 @@ const AdminTransactions = () => {
                 fetchedData.push({ id: doc.id, ...doc.data() });
             });
             console.log(fetchedData);
+            fetchedData.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
             setData(fetchedData);
         } catch (error) {
             console.error("Error fetching documents:", error);
@@ -59,6 +61,15 @@ const AdminTransactions = () => {
         setSelectedInvestment(null);
     };
 
+    const rejectTransaction = async () => {
+        const transactionDocRef = doc(db, 'transactions', selectedInvestment.id);
+        await updateDoc(transactionDocRef, { status: "Rejected" });
+        const investmentDocRef = doc(db, 'investments', selectedInvestment.investmentID);
+        await updateDoc(investmentDocRef, { status: "Rejected" });
+        fetchData();
+        closeModal();
+    }
+
 
     const approveTransaction = async () => {
         setIsModalOpen(false);
@@ -70,10 +81,10 @@ const AdminTransactions = () => {
                 if (userDocSnapshot.exists()) {
                     const currentAmount = userDocSnapshot.data().amount;
                     if (currentAmount == undefined) {
-                        await updateDoc(userDocRef, { amount: selectedInvestment.amount });
+                        await updateDoc(userDocRef, { amount: parseFloat(selectedInvestment.amount) });
                     }
                     else {
-                        const newAmount = currentAmount + parseFloat(selectedInvestment.amount);
+                        const newAmount = parseFloat(currentAmount) + parseFloat(selectedInvestment.amount);
                         await updateDoc(userDocRef, { amount: newAmount });
                     }
                 } else {
@@ -81,8 +92,21 @@ const AdminTransactions = () => {
                 }
             }
 
+            if (selectedInvestment.mode === "withdraw") {
+                const userDocRef = doc(db, 'userInfo', selectedInvestment.uid);
+                const userDocSnapshot = await getDoc(userDocRef);
+                const currentAmount = userDocSnapshot.data().amount;
+                const newAmount = parseFloat(currentAmount) - parseFloat(selectedInvestment.amount);
+                await updateDoc(userDocRef, { amount: newAmount });
+            }
+
             const transactionDocRef = doc(db, 'transactions', selectedInvestment.id);
-            await updateDoc(transactionDocRef, { status: "verified" });
+            if (selectedInvestment.mode === "add money") {
+                await updateDoc(transactionDocRef, { status: "Credited" });
+            }
+            else {
+                await updateDoc(transactionDocRef, { status: "verified" });
+            }
             alert('Status updated successfully!');
             setSelectedInvestment(null);
             fetchData();
@@ -91,6 +115,11 @@ const AdminTransactions = () => {
             alert('Error updating status');
         }
     };
+
+    const convertTime = (time) => {
+        const formattedDate = moment(time).format('DD/MM/YYYY HH:mm');
+        return formattedDate;
+    }
 
 
     return (
@@ -139,7 +168,7 @@ const AdminTransactions = () => {
                                 {note.amount}
                             </div>
                             <div style={{ fontSize: "15px" }}>
-                                {note.dateCreated}
+                                {convertTime(note.dateCreated)}
                             </div>
                             <div style={{ fontSize: "15px" }}>
                                 {note.type ? note.type : note.mode}
@@ -159,6 +188,7 @@ const AdminTransactions = () => {
                     investment={selectedInvestment}
                     onClose={closeModal}
                     onApprove={approveTransaction}
+                    onReject={rejectTransaction}
                 />
             )}
         </section>

@@ -4,19 +4,39 @@ import Modal from 'react-modal';
 import Text from '../Text';
 import { db, auth } from '../../../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, getDoc, doc } from "firebase/firestore";
 import { toast, ToastContainer } from 'react-toastify';
 import moment from 'moment/moment';
 import "react-toastify/dist/ReactToastify.css";
+import { ClipLoader } from 'react-spinners';
+import { ref, getDownloadURL } from 'firebase/storage';
+import { storage } from '../../../firebase';
 
 const Wallet_model = ({ isOpen, onClose, mode }) => {
   const [user, setUser] = useState("");
   const [utrNumber, setUtrNumber] = useState('');
   const [amount, setAmount] = useState();
+  const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(false);
   const handleUtrChange = (e) => setUtrNumber(e.target.value);
-  const handleAmountChange = (e) => setAmount(e.target.value);
+  const [upi, setUpi] = useState("");
+  const [qrCode, setQrCode] = useState('');
+  const handleAmountChange = (e) => {
+    if(mode == "withdraw"){
+      if(parseFloat(e.target.value) > balance)
+        {
+          setError("Not enough balance");
+          setIsValid(false);
+        }
+        else{
+          setError("");
+          setIsValid(true);
+        }
+    }
+    setAmount(e.target.value)
+  };
   const [error, setError] = useState("");
+  const [isValid, setIsValid] = useState(true);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -25,8 +45,53 @@ const Wallet_model = ({ isOpen, onClose, mode }) => {
         setUser(uid);
       }
     });
-
+    mode == "withdraw" && fetchUserAmount();
+    fetchQrCode();
+    fetchUpi();
   }, [user]);
+
+  const fetchUserAmount = async () => {
+    const userDocRef = doc(db, 'userInfo', user);
+    const userDocSnapshot = await getDoc(userDocRef);
+    const currentAmount = userDocSnapshot.data().amount;
+    setBalance(currentAmount);
+    console.log(currentAmount);
+    if (currentAmount == 0) {
+      setError("Not enough balance");
+      setIsValid(false);
+    }
+    if (currentAmount < parseFloat(amount)) {
+      setError("Not enough balance");
+      setIsValid(false);
+    }
+  }
+
+  const fetchQrCode = async () => {
+    try {
+      setLoading(true);
+      const frontRef = ref(storage, `configurations/qrCode`);
+      const frontUrl = await getDownloadURL(frontRef);
+      setQrCode(frontUrl);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error('Error fetching qrCode:', error);
+    }
+  };
+
+  const fetchUpi = async () => {
+    const userDocRef = doc(db, "configuration", "configuration");
+    const userDocSnapshot = await getDoc(userDocRef);
+    if (userDocSnapshot.exists()) {
+      const userData = { id: userDocSnapshot.id, ...userDocSnapshot.data() };
+      if (userData.upiID) {
+        setUpi(userData.upiID);
+      }
+      console.log(userData);
+    } else {
+      console.log("No such document!");
+    }
+  }
 
   const handleAddTransactionToDb = async () => {
     setLoading(true);
@@ -36,7 +101,7 @@ const Wallet_model = ({ isOpen, onClose, mode }) => {
           mode: mode,
           utrNumber: utrNumber,
           uid: user,
-          dateCreated: moment().format("MMM Do YY"),
+          dateCreated: moment().valueOf(),
           amount: amount,
           status: "submitted"
         });
@@ -46,9 +111,8 @@ const Wallet_model = ({ isOpen, onClose, mode }) => {
       else {
         await addDoc(collection(db, "transactions"), {
           mode: mode,
-          upiID: utrNumber,
           uid: user,
-          dateCreated: moment().format("MMM Do YY"),
+          dateCreated: moment().valueOf(),
           amount: amount,
           status: "submitted"
         });
@@ -65,11 +129,10 @@ const Wallet_model = ({ isOpen, onClose, mode }) => {
 
   const handleSubmit = async () => {
     console.log('UTR Number submitted:', utrNumber);
-    if (utrNumber.trim() === "") {
+    if (utrNumber.trim() === "" && mode == "add money") {
       setError("UTRN cannot be empty.");
       return;
-    }
-    console.log(amount);
+    };
     if (amount == undefined || amount == 0) {
       setError("Amount cannot be empty.");
       return;
@@ -98,24 +161,46 @@ const Wallet_model = ({ isOpen, onClose, mode }) => {
         <center><b><h2>Want to {mode}?</h2></b></center>
         <p>Please fill the details.</p>
         <br />
-        {mode === "add money" ?? <p>Please send the payment to the following UPI ID: <strong>your-upi-id@bank</strong></p>}
+        {mode === "add money" && (<div>
+          <p>Please send the payment to the following UPI ID: <strong>{upi}</strong></p>
+        {
+          qrCode &&
+          <div>
+            <a
+              href={qrCode}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'blue', textDecoration: 'underline' }}
+            >
+              View QR Code
+            </a>
+          </div>
+        }
+        </div>)}
         <br />
         <label>
           Enter Amount:
           <input type="text" style={{ marginLeft: 10, marginRight: 20 }} value={amount} onChange={handleAmountChange} />
         </label>
-        <label>
-          {mode == "add money" ? "Enter UTR Number:" : "Enter you UPI ID"}
-          <input type="text" style={{ marginLeft: 10 }} value={utrNumber} onChange={handleUtrChange} />
-        </label>
+        {mode == "add money" && (
+          <label>
+            Enter UTR Number:
+            <input type="text" style={{ marginLeft: 10 }} value={utrNumber} onChange={handleUtrChange} />
+          </label>)}
         <br />
         {error && <p className="error-message">{error}</p>}
-        <Button onClick={handleSubmit} className="mt-6 w-full mx-auto">
-          Submit
-        </Button>
-        <Button onClick={onClose} className="mt-6 w-full mx-auto">
-          Cancel
-        </Button>
+        {loading ? (
+          <center><ClipLoader size={35} color={"#123abc"} loading={loading} /> </center>
+        ) : (
+          <div>
+            {isValid &&
+              (<Button onClick={handleSubmit} className="mt-6 w-full mx-auto">
+                Submit
+              </Button>)}
+            <Button onClick={onClose} className="mt-6 w-full mx-auto">
+              Cancel
+            </Button>
+          </div>)}
         <ToastContainer />
       </Modal>
     </div>

@@ -7,6 +7,7 @@ import Text from '../components/elements/Text';
 import { doc, getDoc, query, collection, where, getDocs } from "firebase/firestore";
 import { db } from '../firebase';
 import Wallet_Model from '../components/elements/Wallet_Model';
+import moment from 'moment';
 
 const Daily_Deposit = () => {
 
@@ -59,6 +60,8 @@ const Daily_Deposit = () => {
                 fetchedData.push({ id: doc.id, ...doc.data() });
             });
             console.log(fetchedData);
+            fetchedData.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+            console.log(fetchedData);
             setData(fetchedData);
         } catch (error) {
             console.error("Error fetching documents:", error);
@@ -67,12 +70,18 @@ const Daily_Deposit = () => {
 
     const closeModal = () => {
         setIsModalOpen(false);
+        fetchData();
     };
 
     useEffect(() => {
         fetchData();
         fetchUserData();
     }, []);
+
+    const convertTime = (time) => {
+        const formattedDate = moment(time).format('DD/MM/YYYY HH:mm');
+        return formattedDate;
+    }
 
     return (
         <section className="text-white pt-10 pb-24 px-3 md:pt-10 md:pb-20">
@@ -124,10 +133,10 @@ const Daily_Deposit = () => {
                                     {note.amount}
                                 </div>
                                 <div style={{ fontSize: "15px" }}>
-                                    {note.dateCreated}
+                                    {convertTime(note.dateCreated)}
                                 </div>
                                 <div style={{ fontSize: "15px" }}>
-                                    {note.utrNumber}
+                                    {note.utrNumber ? note.utrNumber : note.upiID}
                                 </div>
                                 <div style={{ fontSize: "15px" }}>
                                     {note.mode ? note.mode : note.type}

@@ -20,7 +20,7 @@ const Configuration = () => {
     const handleBonusChange = (event) => {
         const value = event.target.value;
         if (/^\d*$/.test(value)) {
-          setBonus(value);
+          setBonus(parseFloat(value));
         }
       };
 

@@ -7,6 +7,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db, auth } from '../../firebase';
 import Investment_Details from '../elements/Investment_model';
+import moment from 'moment';
 
 const Pomodoro = () => {
     const [user, setUser] = useState("");
@@ -63,6 +64,11 @@ const Pomodoro = () => {
         setSelectedInvestment(null);
     };
 
+    const convertTime = (time) => {
+        const formattedDate = moment(time).format('DD/MM/YYYY HH:mm');
+        return formattedDate;
+    }
+
     return (
         <section>
             {
@@ -114,7 +120,7 @@ const Pomodoro = () => {
                                 {note.amount}
                             </div>
                             <div style={{ fontSize: "15px" }}>
-                                {note.dateCreated}
+                                {convertTime(note.dateCreated)}
                             </div>
                             <div style={{ fontSize: "15px" }}>
                                 {note.type}
