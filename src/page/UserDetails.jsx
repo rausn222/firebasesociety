@@ -60,7 +60,7 @@ const UsersDetails = () => {
         }
     };
 
-    const fetchReferData = async () => {
+    const fetchReferData = async (referCode) => {
         try {
             setLoading(true);
             const q = query(collection(db, "userInfo"), where("refer", "==", referCode));
@@ -116,7 +116,8 @@ const UsersDetails = () => {
             if (userDocSnapshot.exists()) {
                 const userData = { id: userDocSnapshot.id, ...userDocSnapshot.data() };
                 setUserData(userData);
-                setReferCode(userData.myRefer)
+                setReferCode(userData.myRefer);
+                fetchReferData(userData.myRefer);
                 console.log(userData);
             } else {
                 console.log("No such document!");

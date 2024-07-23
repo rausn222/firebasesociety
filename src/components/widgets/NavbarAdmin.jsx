@@ -134,7 +134,7 @@ const NavbarAdmin = () => {
                         ))}
                     </div>
                     <Text className="text-white font-bold text-xl">
-                        Welcome, <span> {user.displayName} </span>
+                        Welcome, <span> Admin </span>
                     </Text>
                 </div>
                 <div className='relative space-y-2'>

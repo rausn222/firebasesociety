@@ -40,7 +40,6 @@ const Daily_Deposit = () => {
                 console.log(userData);
             } else {
                 console.log("No such document!");
-                setData(null);
             }
             setLoading(false);
         } catch (error) {
@@ -131,7 +130,7 @@ const Daily_Deposit = () => {
                                     {note.utrNumber}
                                 </div>
                                 <div style={{ fontSize: "15px" }}>
-                                    {note.mode}
+                                    {note.mode ? note.mode : note.type}
                                 </div>
                                 <div style={{ fontSize: "15px" }}>
                                     {note.status}

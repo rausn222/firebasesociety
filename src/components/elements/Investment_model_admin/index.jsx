@@ -38,7 +38,6 @@ const Investment_Details_Admin = ({ isOpen, onClose, investment, onApprove }) =>
   };
 
   const handleSubmit = async () => {
-    // Handle the UTR number submission (e.g., send it to the server or process it further)
     if (investment.mode == "withdraw") {
       if (utrNumber.trim() === "") {
         setError("UTRN cannot be empty.");
@@ -46,6 +45,8 @@ const Investment_Details_Admin = ({ isOpen, onClose, investment, onApprove }) =>
       }
       const userDocRef = doc(db, 'transactions', investment.id);
       await updateDoc(userDocRef, { utrNumber: utrNumber });
+      onApprove();
+    } else{
       onApprove();
     }
   };

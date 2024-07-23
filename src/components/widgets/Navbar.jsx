@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Text from '../elements/Text';
 import { signOut } from "firebase/auth";
 import { auth } from '../../firebase';
@@ -9,14 +9,35 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { FaBars } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import Button from '../elements/Button';
+import { doc, getDoc } from "firebase/firestore";
+import { db } from '../../firebase';
 
 const Navbar = () => {
     const [open, setOpen] = useState(false);
+    const [name, setName] = useState("");
     const [state, setState] = useState({
         left: false,
     });
 
     const user = useSelector((state) => state.user.value);
+
+    const fetchUserInfo = async () => {
+        const userDocRef = doc(db, "userInfo", user.uid);
+        const userDocSnapshot = await getDoc(userDocRef);
+        if (userDocSnapshot.exists()) {
+            const userData = { id: userDocSnapshot.id, ...userDocSnapshot.data() };
+            if (userData.name) {
+                setName(userData.name);
+            }
+            console.log(userData);
+        } else {
+            console.log("No such document!");
+        }
+    }
+
+    useEffect(() => {
+        fetchUserInfo();
+    }, []);
 
     const toggleDrawer = (anchor, open) => (event) => {
         if (
@@ -146,7 +167,7 @@ const Navbar = () => {
                         ))}
                     </div>
                     <Text className="text-white font-bold text-xl">
-                        Welcome, <span> {user.displayName} </span>
+                        Welcome, <span> {name} </span>
                     </Text>
                 </div>
                 <div className='relative space-y-2'>

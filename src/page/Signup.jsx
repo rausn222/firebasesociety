@@ -87,7 +87,8 @@ const Signup = () => {
                             email: auth.currentUser.email,
                             refer: `${values.referCode}`,
                             date: currentDate,
-                            myRefer: (user.email.slice(0, 5) + user.uid.slice(0, 5))
+                            myRefer: (user.email.slice(0, 5) + user.uid.slice(0, 5)),
+                            invested: false
                         });
                         console.log('Document created successfully');
                     }

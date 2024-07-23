@@ -13,9 +13,16 @@ import { db } from '../firebase';
 
 const Configuration = () => {
     const [upi, setUpi] = useState('');
+    const [bonus, setBonus] = useState(0);
     const [qrCode, setQrCode] = useState('');
     const dispatch = useDispatch();
     const handleChange = (e) => setUpi(e.target.value);
+    const handleBonusChange = (event) => {
+        const value = event.target.value;
+        if (/^\d*$/.test(value)) {
+          setBonus(value);
+        }
+      };
 
     const fetchQrCode = async () => {
         try {
@@ -34,6 +41,7 @@ const Configuration = () => {
             const userData = { id: userDocSnapshot.id, ...userDocSnapshot.data() };
             if (userData.upiID) {
                 setUpi(userData.upiID);
+                setBonus(userData.referBonus)
             }
             console.log(userData);
         } else {
@@ -47,17 +55,19 @@ const Configuration = () => {
             const docSnapshot = await getDoc(userDocRef);
             if (docSnapshot.exists()) {
                 await updateDoc(userDocRef, {
-                    upiID: upi
+                    upiID: upi,
+                    referBonus: bonus,
                 });
                 console.log('Document updated successfully');
-                toast("UPI updated successfully");
+                toast("Data updated successfully");
             }
             else {
                 await setDoc(userDocRef, {
-                    upiID: upi
+                    upiID: upi,
+                    referBonus: bonus,
                 });
                 console.log('Document created successfully');
-                toast("UPI updated successfully");
+                toast("Data updated successfully");
             }
         } catch (error) {
             console.error('Error updating/creating document:', error);
@@ -116,6 +126,31 @@ const Configuration = () => {
                         }}
                         style={{ width: '100%', color: 'white', marginTop: 40 }}
                         placeholder="UPI ID"
+                    />
+                    <TextField
+                        label="Refer Bonus"
+                        variant="outlined"
+                        value={bonus}
+                        onChange={handleBonusChange}
+                        InputLabelProps={{
+                            style: { color: 'green' },
+                        }}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: 'white',
+                                },
+                                backgroundColor: 'white',
+                            },
+                        }}
+                        style={{ width: '100%', color: 'white', marginTop: 40 }}
+                        placeholder="Refer Bonus"
                     />
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', marginTop: 10 }}>
                         <Text>QR Code</Text>

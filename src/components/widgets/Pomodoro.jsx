@@ -4,7 +4,7 @@ import Text from '../elements/Text';
 import { useNavigate } from 'react-router-dom';
 import Button from '../elements/Button';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, query, where, addDoc, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import { db, auth } from '../../firebase';
 import Investment_Details from '../elements/Investment_model';
 
