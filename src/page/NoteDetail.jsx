@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate, NavLink } from 'react-router-dom';
-import { collection, query, where, doc, updateDoc, deleteField, getDocs, deleteDoc } from "firebase/firestore";
+import { collection, query, where, doc, updateDoc, getDocs, deleteDoc } from "firebase/firestore";
 import { db, auth } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { AiFillDelete } from 'react-icons/ai';

@@ -3,7 +3,6 @@ import Text from '../components/elements/Text';
 import Card from '../components/elements/Card';
 import Button from '../components/elements/Button';
 import { useNavigate } from 'react-router-dom';
-import { Modal } from 'react-modal';
 import UPIPopup from '../components/elements/Modal';
 import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";

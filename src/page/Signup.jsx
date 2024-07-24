@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Text from '../components/elements/Text';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../firebase';
 import { Formik, Field, Form } from 'formik';
 import { doc, getDoc, setDoc } from "firebase/firestore";

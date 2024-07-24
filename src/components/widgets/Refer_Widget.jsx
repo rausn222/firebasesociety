@@ -6,7 +6,6 @@ import Button from '../elements/Button';
 import { onAuthStateChanged } from 'firebase/auth';
 import { collection, query, where, addDoc, getDocs } from "firebase/firestore";
 import { db, auth } from '../../firebase';
-import Investment_Details from '../elements/Investment_model';
 import Refer_Details from '../elements/Refer_model';
 
 const Refer_Widget = () => {

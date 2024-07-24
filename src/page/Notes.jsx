@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BsPlusLg } from 'react-icons/bs';
 import { FiSearch } from 'react-icons/fi';
 import { collection, query, where, addDoc, getDocs } from "firebase/firestore";

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { getCurrentUser } from '../store/features/userSlice';
 import Pomodoro from '../components/widgets/Pomodoro';
 // import { getAllUserNotes } from '../store/features/noteSlice';

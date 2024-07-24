@@ -1,7 +1,6 @@
 import Button from '../Button';
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
-import Text from '../Text';
 import { db, auth } from '../../../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { collection, addDoc, getDoc, doc } from "firebase/firestore";
