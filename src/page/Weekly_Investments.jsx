@@ -31,17 +31,17 @@ const Weekly_Investments = () => {
     const weeklyAmounts = calculateWeeklyAmounts(amount, weeks, weeklyRate);
 
     const handleButtonClick = () => {
-        if(amount == '' || timePeriod == ''){
+        if (amount == '' || timePeriod == '') {
             toast("Please select amount and duration");
         }
-        else{
+        else {
             setIsUPIPopupOpen(true);
         }
     };
 
     const closeUPIPopup = (message) => {
         console.log(message);
-        if(message == true){
+        if (message == true) {
             toast("Submitted");
         }
         setIsUPIPopupOpen(false);
@@ -142,7 +142,7 @@ const Weekly_Investments = () => {
                             <Button onClick={handleButtonClick} className="mt-6 w-full mx-auto">
                                 Invest Now
                             </Button>
-                            {isUPIPopupOpen && <UPIPopup type={"Weekly"} time={weeks} amount={amount} isOpen={isUPIPopupOpen} onClose={closeUPIPopup} />}
+                            {isUPIPopupOpen && <UPIPopup type={"Weekly"} time={weeks} amount={amount} isOpen={isUPIPopupOpen} onClose={closeUPIPopup} finalAmount={amountWithInterest} />}
                             <ToastContainer />
                         </div>
                     </section>

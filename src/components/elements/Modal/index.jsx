@@ -11,7 +11,7 @@ import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../firebase';
 import { ClipLoader } from 'react-spinners';
 
-const UPIPopup = ({ isOpen, onClose, type, amount, time }) => {
+const UPIPopup = ({ isOpen, onClose, type, amount, time, finalAmount }) => {
   const [utrNumber, setUtrNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [userInvested, setUserInvested] = useState(true);
@@ -105,7 +105,8 @@ const UPIPopup = ({ isOpen, onClose, type, amount, time }) => {
         dateCreated: moment().valueOf(),
         type: type,
         amount: amount,
-        status: "submitted"
+        status: "submitted",
+        finalAmount: finalAmount
       });
       const transactionRef = await addDoc(collection(db, "transactions"), {
         utrNumber: utrNumber,
@@ -162,7 +163,7 @@ const UPIPopup = ({ isOpen, onClose, type, amount, time }) => {
               const referUserDocSnapshot = await getDoc(referUserDocRef);
               if (referUserDocSnapshot.exists()) {
                 const referUserData = referUserDocSnapshot.data();
-                const newReferBalance = referUserData.amount + referBonus;
+                const newReferBalance = parseFloat(referUserData.amount) + parseFloat(referBonus);
                 await updateDoc(referUserDocRef, { amount: newReferBalance });
 
                 await addDoc(collection(db, "transactions"), {
@@ -174,7 +175,6 @@ const UPIPopup = ({ isOpen, onClose, type, amount, time }) => {
                   status: "Credited"
                 });
               }
-
             }
           }
           const newBalance = balance - amountFloat;
@@ -188,7 +188,8 @@ const UPIPopup = ({ isOpen, onClose, type, amount, time }) => {
             dateCreated: moment().valueOf(),
             type: type,
             amount: amount,
-            status: "verified"
+            status: "verified",
+            finalAmount: finalAmount
           });
 
           await addDoc(collection(db, "transactions"), {

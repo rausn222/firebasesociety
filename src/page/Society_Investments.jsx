@@ -165,7 +165,7 @@ const Society_Investments = () => {
                             <Button onClick={handleButtonClick} className="mt-6 w-full mx-auto">
                                 Invest Now
                             </Button>
-                            {isUPIPopupOpen && <UPIPopup type={"Monthly"} time={weeks} amount={amount} isOpen={isUPIPopupOpen} onClose={closeUPIPopup} />}
+                            {isUPIPopupOpen && <UPIPopup type={"Monthly"} time={weeks} amount={amount} isOpen={isUPIPopupOpen} onClose={closeUPIPopup} finalAmount={amountWithInterest}/>}
                             <ToastContainer />
                         </div>
                     </section>

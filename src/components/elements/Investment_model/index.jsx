@@ -84,23 +84,24 @@ const Investment_Details = ({ isOpen, onClose, investment }) => {
         <Text>Investment Status : {investment.status}</Text>
         <Text>Investment Date : {investment.dateCreated}</Text>
         <Text>Investment UTRN : {investment.utrNumber}</Text>
-        
-        <div>
-          {Array.from({ length: investment.time - 2 }).map((_, index) => (
-            <div key={index} style={{margin:10}}>
-              <label>SIP {index + 2}:</label>
-              <input 
-                type="text" 
-                value={sipValues[index] || ''} 
-                onChange={(e) => handleInputChange(index, e.target.value)} 
-              />
-            </div>
-          ))}
-        </div>
-        
-        <Button onClick={handleSubmit} className="mt-6 w-full mx-auto">
-          Save
-        </Button>
+        {investment.type != "Weekly" && (<div>
+          <div>
+            {Array.from({ length: investment.time - 2 }).map((_, index) => (
+              <div key={index} style={{ margin: 10 }}>
+                <label>SIP {index + 2}:</label>
+                <input
+                  type="text"
+                  value={sipValues[index] || ''}
+                  onChange={(e) => handleInputChange(index, e.target.value)}
+                />
+              </div>
+            ))}
+          </div>
+
+          <Button onClick={handleSubmit} className="mt-6 w-full mx-auto">
+            Save
+          </Button>
+        </div>)}
         <Button onClick={onClose} className="mt-6 w-full mx-auto">
           Cancel
         </Button>

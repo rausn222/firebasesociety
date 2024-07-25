@@ -19,6 +19,7 @@ const Signup = () => {
         password: "",
         confirmPassword: "",
         referCode: "",
+        phone:"",
     }
 
     useEffect(() => {
@@ -68,6 +69,12 @@ const Signup = () => {
             errors.referCode = "Invalid refer code"
         }
 
+        if (!values.phone) {
+            errors.phone = "Phone is required";
+        } else if (!(values.phone.length == 10)) {
+            errors.phone = "Invalid phone number"
+        }
+
         return errors;
     }
 
@@ -88,7 +95,8 @@ const Signup = () => {
                             refer: `${values.referCode}`,
                             date: currentDate,
                             myRefer: (user.email.slice(0, 5) + user.uid.slice(0, 5)),
-                            invested: false
+                            invested: false,
+                            phone: `${values.phone}`
                         });
                         console.log('Document created successfully');
                     }
@@ -199,6 +207,25 @@ const Signup = () => {
 
                                                             <p className='text-xs' style={{ color: 'red' }}>
                                                                 {errors.email && touched.email && errors.email}
+                                                            </p>
+                                                        </div>
+
+                                                        <div>
+                                                            <label htmlFor="email-address" className="sr-only">
+                                                                Phone Number
+                                                            </label>
+                                                            <Field
+                                                                type="phone"
+                                                                id="phone"
+                                                                name="phone"
+                                                                value={values.phone}
+                                                                onChange={handleChange}
+                                                                className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                                                                placeholder="Phone Number"
+                                                            />
+
+                                                            <p className='text-xs' style={{ color: 'red' }}>
+                                                                {errors.phone && touched.phone && errors.phone}
                                                             </p>
                                                         </div>
 

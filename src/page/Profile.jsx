@@ -10,23 +10,27 @@ import Button from '../components/elements/Button';
 import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from 'react-router-dom';
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from '../firebase';
 
 const Profile = () => {
     const user = useSelector((state) => state.user.value);
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
     const [bankName, setBankName] = useState('');
     const [ifsc, setIfsc] = useState('');
     const [accountNumber, setAccountNumber] = useState('');
     const [accountName, setAccountName] = useState('');
     const [aadharFrontUrl, setAadharFrontUrl] = useState('');
     const [aadharBackUrl, setAadharBackUrl] = useState('');
+    const [supportPhone, setSupportPhone] = useState('');
+    const [supportEmail, setSupportEmail] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const handleChange = (e) => setName(e.target.value);
+    const handlePhoneChange = (e) => setPhone(e.target.value);
     const handleBankNameChange = (e) => setBankName(e.target.value);
     const handleAccountNumberChange = (e) => setAccountNumber(e.target.value);
     const handleIfscChange = (e) => setIfsc(e.target.value);
@@ -53,11 +57,21 @@ const Profile = () => {
             const userData = { id: userDocSnapshot.id, ...userDocSnapshot.data() };
             if (userData.name) {
                 setName(userData.name);
+                setPhone(userData.phone);
+                setBankName(userData.bankName);
+                setAccountName(userData.accountName);
+                setAccountNumber(userData.accountNumber);
+                setIfsc(userData.ifsc);
             }
             console.log(userData);
         } else {
             console.log("No such document!");
         }
+
+        const configRef = doc(db, "configuration", "configuration");
+        const configSnapshot = await getDoc(configRef);
+        setSupportEmail(configSnapshot.data().supportEmail);
+        setSupportPhone(configSnapshot.data().supportNumber);
     }
 
     const saveChanges = async () => {
@@ -67,10 +81,11 @@ const Profile = () => {
             if (docSnapshot.exists()) {
                 await updateDoc(userDocRef, {
                     name: name,
+                    phone: phone,
                     bankName: bankName,
                     ifsc: ifsc,
-                    accountNumber:accountNumber,
-                    accountName:accountName
+                    accountNumber: accountNumber,
+                    accountName: accountName
                 });
                 console.log('Document updated successfully');
                 toast("User Data updated successfully");
@@ -148,6 +163,31 @@ const Profile = () => {
                         }}
                         style={{ width: '100%', color: 'white', marginTop: 40 }}
                         placeholder="Full Name"
+                    />
+                    <TextField
+                        label="Phone Number"
+                        variant="outlined"
+                        value={phone}
+                        onChange={handlePhoneChange}
+                        InputLabelProps={{
+                            style: { color: 'green' },
+                        }}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: 'white',
+                                },
+                                backgroundColor: 'white',
+                            },
+                        }}
+                        style={{ width: '100%', color: 'white', marginTop: 40 }}
+                        placeholder="Phone Number"
                     />
                     <Text className="font-light text-xl" style={{ marginTop: 30 }}>
                         Bank Details
@@ -302,6 +342,7 @@ const Profile = () => {
                     </Button>
                 </div>
                 <ToastContainer />
+                <Text style={{marginTop:20}}>For any queries, please reach out us at {supportPhone} or write us at {supportEmail}</Text>
             </center>
         </section>
     );

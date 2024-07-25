@@ -22,6 +22,7 @@ import UsersDetails from './page/UserDetails';
 import Configuration from './page/Configuration';
 import Refer from './page/Refer';
 import ForgotPassword from './page/ForgotPassword';
+import AdminInvestments from './page/AdminHome_Investment';
 
 
 function App() {
@@ -97,6 +98,12 @@ function App() {
                   path="/configurations"
                   element={
                     < Configuration />
+                  }
+                />
+                <Route
+                  path="/adminInvestment"
+                  element={
+                    < AdminInvestments />
                   }
                 />
               </Route>

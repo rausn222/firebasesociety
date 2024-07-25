@@ -104,6 +104,18 @@ const NavbarAdmin = () => {
                                 Configurations
                             </li>
                         </NavLink>
+                        <NavLink
+                            to="/adminInvestment"
+                            className={({ isActive }) =>
+                                isActive ? "bg-secondary w-full block border-l-2 border-l-tertiary mr-2 py-3  text-sm"
+                                    :
+                                    "mr-2 text-sm py-3 pl-4"
+                            }
+                        >
+                            <li className="p-4 ">
+                                Live Investments
+                            </li>
+                        </NavLink>
                     </ul>
                 </div>
             </List>

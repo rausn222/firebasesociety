@@ -15,14 +15,18 @@ const Configuration = () => {
     const [upi, setUpi] = useState('');
     const [bonus, setBonus] = useState(0);
     const [qrCode, setQrCode] = useState('');
+    const [supportPhone, setSupportPhone] = useState('');
+    const [supportEmail, setSupportEmail] = useState('');
     const dispatch = useDispatch();
     const handleChange = (e) => setUpi(e.target.value);
+    const handlePhoneChange = (e) => setSupportPhone(e.target.value);
+    const handleEmailChange = (e) => setSupportEmail(e.target.value);
     const handleBonusChange = (event) => {
         const value = event.target.value;
         if (/^\d*$/.test(value)) {
-          setBonus(parseFloat(value));
+            setBonus(parseFloat(value));
         }
-      };
+    };
 
     const fetchQrCode = async () => {
         try {
@@ -41,7 +45,9 @@ const Configuration = () => {
             const userData = { id: userDocSnapshot.id, ...userDocSnapshot.data() };
             if (userData.upiID) {
                 setUpi(userData.upiID);
-                setBonus(userData.referBonus)
+                setBonus(userData.referBonus);
+                setSupportEmail(userData.supportEmail);
+                setSupportPhone(userData.supportNumber);
             }
             console.log(userData);
         } else {
@@ -57,6 +63,8 @@ const Configuration = () => {
                 await updateDoc(userDocRef, {
                     upiID: upi,
                     referBonus: bonus,
+                    supportNumber: supportPhone,
+                    supportEmail: supportEmail
                 });
                 console.log('Document updated successfully');
                 toast("Data updated successfully");
@@ -65,6 +73,8 @@ const Configuration = () => {
                 await setDoc(userDocRef, {
                     upiID: upi,
                     referBonus: bonus,
+                    supportNumber: supportPhone,
+                    supportEmail: supportEmail
                 });
                 console.log('Document created successfully');
                 toast("Data updated successfully");
@@ -151,6 +161,56 @@ const Configuration = () => {
                         }}
                         style={{ width: '100%', color: 'white', marginTop: 40 }}
                         placeholder="Refer Bonus"
+                    />
+                    <TextField
+                        label="Support Number"
+                        variant="outlined"
+                        value={supportPhone}
+                        onChange={handlePhoneChange}
+                        InputLabelProps={{
+                            style: { color: 'green' },
+                        }}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: 'white',
+                                },
+                                backgroundColor: 'white',
+                            },
+                        }}
+                        style={{ width: '100%', color: 'white', marginTop: 40 }}
+                        placeholder="Support Number"
+                    />
+                    <TextField
+                        label="Support Email"
+                        variant="outlined"
+                        value={supportEmail}
+                        onChange={handleEmailChange}
+                        InputLabelProps={{
+                            style: { color: 'green' },
+                        }}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: 'white',
+                                },
+                                backgroundColor: 'white',
+                            },
+                        }}
+                        style={{ width: '100%', color: 'white', marginTop: 40 }}
+                        placeholder="Support Email"
                     />
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', marginTop: 10 }}>
                         <Text>QR Code</Text>

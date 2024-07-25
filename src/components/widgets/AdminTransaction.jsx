@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import Card from '../elements/Card';
 import Text from '../elements/Text';
-import { useNavigate } from 'react-router-dom';
 import Button from '../elements/Button';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, query, where, getDocs, getDoc, doc, updateDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, getDoc, doc, updateDoc, addDoc } from "firebase/firestore";
 import { db, auth } from '../../firebase';
 import Investment_Details_Admin from '../elements/Investment_model_admin';
 import moment from 'moment';
 
 const AdminTransactions = () => {
     const [user, setUser] = useState("");
-    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
-    const [selectedInvestment, setSelectedInvestment] = useState(null); // State for selected investment
-    const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+    const [selectedInvestment, setSelectedInvestment] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [userInvested, setUserInvested] = useState(true);
+    const [referBonus, setReferBonus] = useState(0);
 
     const fetchData = async () => {
         try {
@@ -64,16 +64,70 @@ const AdminTransactions = () => {
     const rejectTransaction = async () => {
         const transactionDocRef = doc(db, 'transactions', selectedInvestment.id);
         await updateDoc(transactionDocRef, { status: "Rejected" });
-        const investmentDocRef = doc(db, 'investments', selectedInvestment.investmentID);
-        await updateDoc(investmentDocRef, { status: "Rejected" });
+        if (selectedInvestment.type) {
+            const investmentDocRef = doc(db, 'investments', selectedInvestment.investmentID);
+            await updateDoc(investmentDocRef, { status: "Rejected" });
+        }
         fetchData();
         closeModal();
+    }
+
+
+    const checkReferBonus = async () => {
+        console.log("inside");
+        try {
+            const configRef = doc(db, "configuration", "configuration");
+            const configSnapshot = await getDoc(configRef);
+            setReferBonus(configSnapshot.data().referBonus);
+            const userDocRef = doc(db, "userInfo", selectedInvestment.uid);
+            const userDocSnapshot = await getDoc(userDocRef);
+            var referID;
+            if (userDocSnapshot.exists()) {
+                const userData = { id: userDocSnapshot.id, ...userDocSnapshot.data() };
+                setUserInvested(userData.invested);
+                referID = userData.refer;
+            }
+            if (!userInvested) {
+                var referUID;
+                const q = query(collection(db, "userInfo"), where("myRefer", "==", referID));
+                const querySnapshot = await getDocs(q);
+                querySnapshot.forEach((doc) => {
+                    referUID = doc.id;
+                });
+                console.log("uid", referUID);
+                if (referUID) {
+                    const referUserDocRef = doc(db, "userInfo", referUID);
+                    const referUserDocSnapshot = await getDoc(referUserDocRef);
+                    if (referUserDocSnapshot.exists()) {
+                        const referUserData = referUserDocSnapshot.data();
+                        const newReferBalance = parseFloat(referUserData.amount) + parseFloat(referBonus);
+                        await updateDoc(referUserDocRef, { amount: newReferBalance });
+
+                        await addDoc(collection(db, "transactions"), {
+                            utrNumber: "Rererral Bonus",
+                            uid: referUID,
+                            dateCreated: moment().valueOf(),
+                            mode: "Rererral Bonus",
+                            amount: referBonus,
+                            status: "Credited"
+                        });
+                    }
+                }
+            }
+        }
+        catch (error) {
+            console.error("Error updating document: ", error);
+            alert('Error updating status');
+        }
     }
 
 
     const approveTransaction = async () => {
         setIsModalOpen(false);
         try {
+            if (!selectedInvestment.mode) {
+                await checkReferBonus();
+            }
             if (selectedInvestment.mode === "add money") {
                 const userDocRef = doc(db, 'userInfo', selectedInvestment.uid);
                 const userDocSnapshot = await getDoc(userDocRef);
@@ -105,7 +159,11 @@ const AdminTransactions = () => {
                 await updateDoc(transactionDocRef, { status: "Credited" });
             }
             else {
-                await updateDoc(transactionDocRef, { status: "verified" });
+                await updateDoc(transactionDocRef, { status: "Verified" });
+            }
+            if (selectedInvestment.type) {
+                const investmentDocRef = doc(db, 'investments', selectedInvestment.investmentID);
+                await updateDoc(investmentDocRef, { status: "Verified" });
             }
             alert('Status updated successfully!');
             setSelectedInvestment(null);

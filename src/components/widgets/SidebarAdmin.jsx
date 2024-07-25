@@ -7,7 +7,7 @@ const SidebarAdmin = () => {
         <aside className="text-white md:block hidden">
             <ul>
                 <Text className="md:block hidden text-2xl pl-4 mt-6 font-bold mb-12">
-                Bhartiye<span className="text-tertiary">Society</span>
+                    Bhartiye<span className="text-tertiary">Society</span>
                 </Text>
 
                 <div className='flex flex-col md:hidden items-center justify-between p-4 mt-6 space-y-6   mb-12'>
@@ -54,6 +54,18 @@ const SidebarAdmin = () => {
                 >
                     <li className="p-4">
                         Configurations
+                    </li>
+                </NavLink>
+                <NavLink
+                    to="/adminInvestment"
+                    className={({ isActive }) =>
+                        isActive ? "bg-secondary w-full block border-l-2 border-l-tertiary mr-2 py-3  text-sm"
+                            :
+                            "mr-2 text-sm py-3 pl-4"
+                    }
+                >
+                    <li className="p-4">
+                        Live Investments
                     </li>
                 </NavLink>
             </ul>
