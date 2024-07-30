@@ -16,6 +16,8 @@ const AdminTransactions = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [userInvested, setUserInvested] = useState(true);
     const [referBonus, setReferBonus] = useState(0);
+    const [withDrawAmount, setWithDrawAmount] = useState(0);
+    const [creditAmount, setCreditAmount] = useState(0);
 
     const fetchData = async () => {
         try {
@@ -30,6 +32,10 @@ const AdminTransactions = () => {
             console.log(fetchedData);
             fetchedData.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
             setData(fetchedData);
+            const configRef = doc(db, "configuration", "configuration");
+            const configSnapshot = await getDoc(configRef);
+            setWithDrawAmount(configSnapshot.data().withDrawAmount);
+            setCreditAmount(configSnapshot.data().creditAmount);
         } catch (error) {
             console.error("Error fetching documents:", error);
         }
@@ -144,6 +150,8 @@ const AdminTransactions = () => {
                 } else {
                     await updateDoc(userDocRef, { amount: selectedInvestment.amount });
                 }
+
+
             }
 
             if (selectedInvestment.mode === "withdraw") {
@@ -152,6 +160,10 @@ const AdminTransactions = () => {
                 const currentAmount = userDocSnapshot.data().amount;
                 const newAmount = parseFloat(currentAmount) - parseFloat(selectedInvestment.amount);
                 await updateDoc(userDocRef, { amount: newAmount });
+                
+                const newAmountTotal = parseFloat(withDrawAmount) + parseFloat(selectedInvestment.amount);
+                const configRef = doc(db, "configuration", "configuration");
+                await updateDoc(configRef, { withDrawAmount: newAmountTotal });
             }
 
             const transactionDocRef = doc(db, 'transactions', selectedInvestment.id);
@@ -166,6 +178,9 @@ const AdminTransactions = () => {
                 await updateDoc(investmentDocRef, { status: "Verified" });
             }
             alert('Status updated successfully!');
+            const newAmountTotal = parseFloat(creditAmount) + parseFloat(selectedInvestment.amount);
+            const configRef = doc(db, "configuration", "configuration");
+            await updateDoc(configRef, { creditAmount: newAmountTotal });
             setSelectedInvestment(null);
             fetchData();
         } catch (error) {
@@ -182,6 +197,18 @@ const AdminTransactions = () => {
 
     return (
         <section>
+            {
+                <Card className="text-center pb-16">
+                    <div className='flex flex-col'>
+                        <Text className="font-semibold text-xl">
+                            Credit Approved {creditAmount}
+                        </Text>
+                        <Text className="font-semibold text-xl">
+                            Withdraw Approved {withDrawAmount}
+                        </Text>
+                    </div>
+                </Card>
+            }
             {
                 data.length === 0 && <Card className="text-center pb-16">
                     <Text className="font-semibold text-xl">

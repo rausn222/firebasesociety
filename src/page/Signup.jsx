@@ -57,8 +57,8 @@ const Signup = () => {
 
         if (!values.password) {
             errors.password = "Password number is required";
-        } else if (values.password.length <= 8) {
-            errors.password = "Password length must be more than 7"
+        } else if (values.password.length <= 9) {
+            errors.password = "Password length must be more than or equal to 10"
         }
 
         if (values.password !== values.confirmPassword) {
