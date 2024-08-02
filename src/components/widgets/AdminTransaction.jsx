@@ -160,7 +160,7 @@ const AdminTransactions = () => {
                 const currentAmount = userDocSnapshot.data().amount;
                 const newAmount = parseFloat(currentAmount) - parseFloat(selectedInvestment.amount);
                 await updateDoc(userDocRef, { amount: newAmount });
-                
+
                 const newAmountTotal = parseFloat(withDrawAmount) + parseFloat(selectedInvestment.amount);
                 const configRef = doc(db, "configuration", "configuration");
                 await updateDoc(configRef, { withDrawAmount: newAmountTotal });
@@ -176,11 +176,11 @@ const AdminTransactions = () => {
             if (selectedInvestment.type) {
                 const investmentDocRef = doc(db, 'investments', selectedInvestment.investmentID);
                 await updateDoc(investmentDocRef, { status: "Verified" });
+                const newAmountTotal = parseFloat(creditAmount) + parseFloat(selectedInvestment.amount);
+                const configRef = doc(db, "configuration", "configuration");
+                await updateDoc(configRef, { creditAmount: newAmountTotal });
             }
             alert('Status updated successfully!');
-            const newAmountTotal = parseFloat(creditAmount) + parseFloat(selectedInvestment.amount);
-            const configRef = doc(db, "configuration", "configuration");
-            await updateDoc(configRef, { creditAmount: newAmountTotal });
             setSelectedInvestment(null);
             fetchData();
         } catch (error) {
